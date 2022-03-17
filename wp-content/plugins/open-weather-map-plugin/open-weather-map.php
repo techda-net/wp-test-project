@@ -15,13 +15,15 @@
 
 defined('ABSPATH') or die();
 
-if (!class_exists()) {
+if (!class_exists(OpenWeatherMap::class)) {
     class OpenWeatherMap
     {
         public function __construct()
         {
-            //TODO Plugin activation
-            //TODO register CPT
+            //Plugin activation
+            register_activation_hook(__FILE__, [$this, 'activate_plugin']);
+            //register CPT
+            add_action('init', [$this, 'register_cities_cpt']);
             //TODO register ACF fields
             //TODO include cpt templates
             //TODO Plugin deactivation
@@ -31,14 +33,55 @@ if (!class_exists()) {
             //TODO class API open weather API with settings option
         }
 
+        /**
+         * Function called on plugin activation, will check if acf Plugin installed & activated
+         *
+         */
         function activate_plugin()
         {
-            //TODO check if acf installed & activated
+            //check if acf installed & activated
+            if (!is_plugin_active('advanced-custom-fields/acf.php')) {
+                wp_die('Pls install & active ACF to use this Plugin!');
+            }
+            $this->register_cities_cpt();
             flush_rewrite_rules();
         }
 
+        /**
+         * register post type : cities
+         */
         function register_cities_cpt()
         {
+            $labels = [
+                "name" => __("cities", "open-weather-map"),
+                "singular_name" => __("city", "open-weather-map"),
+            ];
+
+            $args = [
+                "label" => __("cities", "open-weather-map"),
+                "labels" => $labels,
+                "description" => "",
+                "public" => true,
+                "publicly_queryable" => true,
+                "show_ui" => true,
+                "show_in_rest" => true,
+                "rest_base" => "",
+                "rest_controller_class" => "WP_REST_Posts_Controller",
+                "has_archive" => true,
+                "show_in_menu" => true,
+                "show_in_nav_menus" => true,
+                "delete_with_user" => false,
+                "exclude_from_search" => false,
+                "capability_type" => "post",
+                "map_meta_cap" => true,
+                "hierarchical" => false,
+                "rewrite" => ["slug" => "cities", "with_front" => true],
+                "query_var" => true,
+                "supports" => ["title"],
+                "show_in_graphql" => false,
+            ];
+
+            register_post_type("cities", $args);
         }
 
         function deactivate_plugin()
