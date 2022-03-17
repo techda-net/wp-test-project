@@ -24,7 +24,8 @@ if (!class_exists(OpenWeatherMap::class)) {
             register_activation_hook(__FILE__, [$this, 'activate_plugin']);
             //register CPT
             add_action('init', [$this, 'register_cities_cpt']);
-            //TODO register ACF fields
+            //register ACF fields
+            add_action('acf/init', [$this, 'register_acf_fields']);
             //TODO include cpt templates
             //TODO Plugin deactivation
             //TODO unregister cpt
@@ -84,6 +85,46 @@ if (!class_exists(OpenWeatherMap::class)) {
             register_post_type("cities", $args);
         }
 
+        /**
+         * register custom post fields zip, latitude, longitude
+         */
+        function register_acf_fields()
+        {
+            register_field_group([
+                'id' => 'acf_cities',
+                'title' => 'Cities',
+                'fields' => [
+                    [
+                        'key' => 'field_zip',
+                        'label' => 'Zip',
+                        'name' => 'zip',
+                        'type' => 'text',
+                    ],
+                    [
+                        'key' => 'field_latitude',
+                        'label' => 'Latitude',
+                        'name' => 'latitude',
+                        'type' => 'text',
+                    ],
+                    [
+                        'key' => 'field_longitude',
+                        'label' => 'longitude',
+                        'name' => 'longitude',
+                        'type' => 'text',
+                    ],
+                ],
+                'location' => [
+                    [
+                        [
+                            'param' => 'post_type',
+                            'operator' => '==',
+                            'value' => 'cities',
+                        ],
+                    ],
+                ],
+            ]);
+        }
+
         function deactivate_plugin()
         {
             flush_rewrite_rules();
@@ -93,6 +134,7 @@ if (!class_exists(OpenWeatherMap::class)) {
         {
             //TODO clear Plugin Data
             //Delete CPT posts
+            //delete acf custom fields
             //Delete settings option
         }
 
