@@ -26,7 +26,8 @@ if (!class_exists(OpenWeatherMap::class)) {
             add_action('init', [$this, 'register_cities_cpt']);
             //register ACF fields
             add_action('acf/init', [$this, 'register_acf_fields']);
-            //TODO include cpt templates
+            //include cpt templates
+            add_filter('template_include', [$this, 'include_cpt_templates']);
             //TODO Plugin deactivation
             //TODO unregister cpt
             //TODO unregister ACF fields
@@ -123,6 +124,24 @@ if (!class_exists(OpenWeatherMap::class)) {
                     ],
                 ],
             ]);
+        }
+
+        /**
+         * Load CPT Single & Archive Template
+         * @param $template
+         * @return mixed|string
+         */
+        function include_cpt_templates($template)
+        {
+            if (is_post_type_archive(['cities'])) {
+                $template = plugin_dir_path(__FILE__) . 'templates/archive-cities.php';
+            }
+
+            if (is_singular(['cities'])) {
+                $template = plugin_dir_path(__FILE__) . 'templates/single-cities.php';
+            }
+
+            return $template;
         }
 
         function deactivate_plugin()
