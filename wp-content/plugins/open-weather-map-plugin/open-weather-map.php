@@ -28,11 +28,12 @@ if (!class_exists(OpenWeatherMap::class)) {
             add_action('acf/init', [$this, 'register_acf_fields']);
             //include cpt templates
             add_filter('template_include', [$this, 'include_cpt_templates']);
+            //class API open weather API with settings option
+            add_action('plugin_loaded', [$this, 'include_class_open_weather_map']);
             //TODO Plugin deactivation
             //TODO unregister cpt
             //TODO unregister ACF fields
             //TODO Plugin uninstall
-            //TODO class API open weather API with settings option
         }
 
         /**
@@ -93,7 +94,7 @@ if (!class_exists(OpenWeatherMap::class)) {
         {
             register_field_group([
                 'id' => 'acf_cities',
-                'title' => 'Cities',
+                'title' => 'City Data',
                 'fields' => [
                     [
                         'key' => 'field_zip',
@@ -142,6 +143,14 @@ if (!class_exists(OpenWeatherMap::class)) {
             }
 
             return $template;
+        }
+
+        /**
+         * include class-open-weather-map-api.php
+         */
+        function include_class_open_weather_map()
+        {
+            include 'inc/class-open-weather-map-api.php';
         }
 
         function deactivate_plugin()
