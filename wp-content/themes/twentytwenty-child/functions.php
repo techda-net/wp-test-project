@@ -18,7 +18,7 @@ function twentytweny_child_enqueue_scripts()
     //enqueue child theme style
     wp_enqueue_style(
     'twentytwenty-child-style',
-    get_stylesheet_directory_uri().'style.css'
+    get_stylesheet_directory_uri().'/style.css'
     );
 }
 
